@@ -28,73 +28,39 @@
  * SUCH DAMAGE.
  */
 
-class B_logview__read_log extends Block
+class B_logview__show_navigation extends Block
 {
 
 	protected $inputs = array(
-		'file' => array(),		// Name of file to show
-		'offset' => 0,			// Start from byte 'offset'
-		'max_lines' => 300,		// Max. lines count
-		'snap_url' => null,		// Snap to line start -- redirect url.
+		'file' => array(),			// Filename
+		'offsets' => array(),
+		'link' => array(),
+		'slot' => 'default',
+		'slot_weight' => 50,
 	);
 
 	protected $outputs = array(
-		'file' => true,			// Name of file
-		'lines' => true,		// Loaded lines (in array).
-		'offsets' => true,		// Offsets: First line, line after last line, eof.
-		'count' => true,		// Count of loaded lines.
 		'done' => true,
 	);
+
+	const force_exec = true;
 
 
 	public function main()
 	{
-		$file = filename_format($this->in('file'));
-		$offset = $this->in('offset');
-		$max_lines = $this->in('max_lines');
-		$snap_url = $this->in('snap_url');
+		$offsets = $this->in('offsets');
 
-		// Open log
-		$f = fopen($file, 'rt');
-		if ($f === FALSE) {
-			return;
-		}
-
-		// Seek to offset
-		if ($offset > 0) {
-			if ($snap_url != '') {
-				fseek($f, $offset - 1, SEEK_SET);
-				fgets($f); // read '\n' if we are on begin of line, otherwise read to begin of next line
-				$real_offset = ftell($f);
-				if ($real_offset != $offset) {
-					$url = filename_format($snap_url, array('offset' => $real_offset));
-					$this->template_option_set('root', 'redirect_url', $url);
-				}
-			} else {
-				fseek($f, $offset, SEEK_SET);
-			}
-		}
-
-		for ($i = 0; $i < $max_lines && ($ln = fgets($f)) !== FALSE; $i++) {
-			$lines[] = $ln;
-		}
-
-		$stat = fstat($f);
-
-		$offsets = array(
-			'begin' => $offset,
-			'end' => ftell($f),
-			'eof' => $stat['size'],
-		);
-
-		$this->out('file', $file);
-		$this->out('lines', $lines);
-		$this->out('offsets', $offsets);
-		$this->out('count', $i);
-		$this->out('done', true);
-
-		fclose($f);
+		$this->template_add(null, 'logview/navigation', array(
+				'file' => $this->in('file'),
+				'link' => $this->in('link'),
+				'begin_offset' => $offsets['begin'],
+				'end_offset' => $offsets['end'],
+				'eof_offset' => $offsets['eof'],
+				'at_begin' => $offsets['begin'] == 0,
+				'at_eof' => $offsets['end'] == $offsets['eof'],
+			));
 	}
+
 }
 
 

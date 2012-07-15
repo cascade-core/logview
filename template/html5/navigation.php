@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright (c) 2011, Josef Kufner  <jk@frozen-doe.net>
+ * Copyright (c) 2012, Josef Kufner  <jk@frozen-doe.net>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -28,32 +28,55 @@
  * SUCH DAMAGE.
  */
 
-function TPL_html5__logview__log($t, $id, $d, $so)
+function TPL_html5__logview__navigation($t, $id, $d, $so)
 {
 	extract($d);
 
-	echo	"<div class=\"logview_log\" id=\"", $id, "\"><tt>\n";
+	echo "<table width=\"100%\" class=\"logview_navigation\" id=\"", $id, "\">\n";
+	echo "<col width=\"50%\">\n";
+	echo "<col>\n";
+	echo "<col width=\"50%\">\n";
 
-	$re_class = array(
-		'error' => '/ Error:/i',
-		'warning' => '/PHP Notice:| Warning:/i',
-		'debug' => '/ Debug:/i',
-	);
+	echo "<tr>\n";
 
-	foreach ($lines as $line) {
+	echo "<td rowspan=\"2\" align=\"left\" valign=\"middle\" class=\"prev\">\n";
 
-		$line_class = '';
-		foreach ($re_class as $class => $re) {
-			if (preg_match($re, $line)) {
-				$line_class = $class;
-				break;
-			}
-		}
-
-		echo "<div class=\"$line_class\">", str_replace("\040\040", "\040&nbsp;", htmlspecialchars($line)), "</div>\n";
+	// Begin
+	if (!$at_begin) {
+		echo "\t<a href=\"", filename_format($link, array('offset' => 0)), "\">", _('Begin'), "</a>\n";
 	}
 
-	echo "</tt></div>\n";
+	echo "</td>\n";
+
+	// Position
+	echo "<td nowrap align=\"center\" class=\"position\">";
+	printf(_('Position: <b>%d %%</b> … %d %% (Bytes %s … %s of %s)'),
+			100. * $begin_offset / $eof_offset,
+			100. * $end_offset / $eof_offset,
+		       	$begin_offset, $end_offset, $eof_offset);
+	echo "</td>\n";
+
+
+	echo "<td rowspan=\"2\" align=\"right\" valign=\"middle\" class=\"next\">\n";
+
+	// Next
+	if (!$at_eof) {
+		echo "\t<a href=\"", filename_format($link, array('offset' => $end_offset)), "\">", _('Next page »'), "</a>\n";
+	}
+
+	echo "</td>\n";
+
+	echo "</tr>\n";
+	echo "<tr>\n";
+
+	// File
+	echo "<td nowrap align=\"center\" class=\"file\">";
+	printf('File: <tt>%s</tt>', htmlspecialchars($file));
+	echo "</td>\n";
+
+	echo "</tr>\n";
+	echo "</table>\n";
 }
+
 
 
