@@ -34,13 +34,17 @@ class B_logview__read_log extends Block
 	protected $inputs = array(
 		'file' => array(),		// Name of file to show
 		'offset' => 0,			// Start from byte 'offset'
-		'max_lines' => 150,		// Max. lines count
+		'max_lines' => 1000,		// Max. lines count
+		'snap_url' => null,		// Snap to line start -- redirect url.
 	);
 
 	protected $outputs = array(
 		'lines' => true,		// Loaded lines (in array).
+		'begin_offset' => true,		// Offset of the first line.
+		'end_offset' => true,		// Offset of line after the last line.
 		'at_begin' => true,		// True, if there is nothing before first line in 'lines'.
 		'at_eof' => true,		// True, if there is nothing after last line in 'lines'.
+		'count' => true,		// Count of loaded lines.
 		'done' => true,
 	);
 
@@ -49,13 +53,43 @@ class B_logview__read_log extends Block
 	{
 		$file = filename_format($this->in('file'));
 		$offset = $this->in('offset');
+		$max_lines = $this->in('max_lines');
+		$snap_url = $this->in('snap_url');
 
-		$lines = file($file);
+		// Open log
+		$f = fopen($file, 'rt');
+		if ($f === FALSE) {
+			return;
+		}
+
+		// Seek to offset
+		if ($offset > 0) {
+			if ($snap_url != '') {
+				fseek($f, $offset - 1, SEEK_SET);
+				fgets($f); // read '\n' if we are on begin of line, otherwise read to begin of next line
+				$real_offset = ftell($f);
+				if ($real_offset != $offset) {
+					$url = filename_format($snap_url, array('offset' => $real_offset));
+					$this->template_option_set('root', 'redirect_url', $url);
+				}
+			} else {
+				fseek($f, $offset, SEEK_SET);
+			}
+		}
+
+		for ($i = 0; $i < $max_lines && ($ln = fgets($f)) !== FALSE; $i++) {
+			$lines[] = $ln;
+		}
 
 		$this->out('lines', $lines);
-		$this->out('at_begin', true);
-		$this->out('at_eof', true);
-		$this->out('done', $lines !== false);
+		$this->out('begin_offset', $offset);
+		$this->out('end_offset', ftell($f));
+		$this->out('at_begin', $offset == 0);
+		$this->out('at_eof', feof($f));
+		$this->out('count', $i);
+		$this->out('done', true);
+
+		fclose($f);
 	}
 }
 
