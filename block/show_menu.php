@@ -28,13 +28,12 @@
  * SUCH DAMAGE.
  */
 
-class B_logview__show_log extends Block
+class B_logview__show_menu extends Block
 {
 
 	protected $inputs = array(
-		'lines' => array(),
-		'name' => null,				// Name of the log
-		'line_link' => '#byte{offset}',
+		'file_map' => array(),
+		'link' => array(),
 		'slot' => 'default',
 		'slot_weight' => 50,
 	);
@@ -48,10 +47,9 @@ class B_logview__show_log extends Block
 
 	public function main()
 	{
-		$this->template_add(null, 'logview/log', array(
-				'lines' => $this->in('lines'),
-				'name' => $this->in('name'),
-				'line_link' => $this->in('line_link'),
+		$this->template_add(null, 'logview/menu', array(
+				'file_map' => $this->in('file_map'),
+				'link' => $this->in('link'),
 			));
 
 		$this->out('done', true);

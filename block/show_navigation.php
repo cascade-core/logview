@@ -62,6 +62,8 @@ class B_logview__show_navigation extends Block
 				'at_begin' => $offsets['begin'] == 0,
 				'at_eof' => $offsets['end'] == $offsets['eof'],
 			));
+
+		$this->out('done', true);
 	}
 
 }

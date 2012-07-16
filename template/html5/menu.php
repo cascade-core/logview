@@ -28,35 +28,21 @@
  * SUCH DAMAGE.
  */
 
-class B_logview__show_log extends Block
+
+function TPL_html5__logview__menu($t, $id, $d, $so)
 {
+	extract($d);
 
-	protected $inputs = array(
-		'lines' => array(),
-		'name' => null,				// Name of the log
-		'line_link' => '#byte{offset}',
-		'slot' => 'default',
-		'slot_weight' => 50,
-	);
+	echo "<ul class=\"logview_menu\" id=\"", $id, "\">\n";
 
-	protected $outputs = array(
-		'done' => true,
-	);
-
-	const force_exec = true;
-
-
-	public function main()
-	{
-		$this->template_add(null, 'logview/log', array(
-				'lines' => $this->in('lines'),
-				'name' => $this->in('name'),
-				'line_link' => $this->in('line_link'),
-			));
-
-		$this->out('done', true);
+	foreach ($file_map as $name => $file) {
+		echo "<li>";
+		printf(_('<a href="%s">%s</a>: %s'), filename_format($link, array('name' => $name, 'offset' => 'eof')), $name, $file);
+		echo "</li>\n";
 	}
 
+	echo "</ul>\n";
 }
+
 
 
