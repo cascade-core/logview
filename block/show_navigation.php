@@ -54,6 +54,7 @@ class B_logview__show_navigation extends Block
 				'file' => $this->in('file'),
 				'link' => $this->in('link'),
 				'begin_offset' => $offsets['begin'],
+				'prev_offset' => $offsets['prev'],
 				'end_offset' => $offsets['end'],
 				'eof_offset' => $offsets['eof'],
 				'at_begin' => $offsets['begin'] == 0,

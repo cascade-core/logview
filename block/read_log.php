@@ -60,30 +60,39 @@ class B_logview__read_log extends Block
 			return;
 		}
 
+		$stat = fstat($f);
+
 		// Seek to offset
-		if ($offset > 0) {
+		if ($offset == 'eof') {
+			$offset = $this->find_prev_page_offset($f, $stat['size'], $max_lines);
+		} else if ($offset > 0) {
 			if ($snap_url != '') {
-				fseek($f, $offset - 1, SEEK_SET);
+				fseek($f, min($offset, $stat['size']) - 1, SEEK_SET);
 				fgets($f); // read '\n' if we are on begin of line, otherwise read to begin of next line
 				$real_offset = ftell($f);
 				if ($real_offset != $offset) {
+					debug_msg('Snap to byte %s (requested %s).', $real_offset, $offset);
 					$url = filename_format($snap_url, array('offset' => $real_offset));
 					$this->template_option_set('root', 'redirect_url', $url);
+					return;
 				}
 			} else {
-				fseek($f, $offset, SEEK_SET);
+				fseek($f, min($offset, $stat['size']), SEEK_SET);
 			}
 		}
+		$begin_offset = ftell($f);
 
+		// Read requested lines
 		for ($i = 0; $i < $max_lines && ($ln = fgets($f)) !== FALSE; $i++) {
 			$lines[] = $ln;
 		}
+		$end_offset = ftell($f);
 
-		$stat = fstat($f);
-
+		// Collect offsets
 		$offsets = array(
-			'begin' => $offset,
-			'end' => ftell($f),
+			'begin' => $begin_offset,
+			'end' => $end_offset,
+			'prev' => $this->find_prev_page_offset($f, $begin_offset, $max_lines),
 			'eof' => $stat['size'],
 		);
 
@@ -94,6 +103,49 @@ class B_logview__read_log extends Block
 		$this->out('done', true);
 
 		fclose($f);
+	}
+
+	private function find_prev_page_offset($f, $begin_offset, $max_lines, $step = 4096)
+	{
+		$line_offsets = array();
+		$p = $begin_offset;
+
+		$min_line_offset = $p;
+		$can_read = true;
+
+		while (count($line_offsets) <= $max_lines && $min_line_offset > 0 && $can_read) {
+			// Step backward in file
+			if ($p > $step) {
+				$p -= $step;
+				fseek($f, $p, SEEK_SET);
+				fgets($f);
+			} else {
+				$p = 0;
+				fseek($f, $p, SEEK_SET);
+			}
+
+			// Find all line begins from $p to $min_line_offset
+			$line_begin = ftell($f);
+			while ($line_begin < $min_line_offset) {
+				$line_offsets[] = $line_begin;
+				if (fgets($f) === FALSE) {
+					$can_read = false;
+					break;
+				}
+				$line_begin = ftell($f);
+			}
+
+			$min_line_offset = $p;
+		}
+
+		if (empty($line_offsets)) {
+			return 0;
+		}
+
+		// Sort and get offset of the first of last $max_lines lines
+		sort($line_offsets, SORT_NUMERIC);
+		$i = max(0, count($line_offsets) - $max_lines);
+		return $line_offsets[$i];
 	}
 }
 
