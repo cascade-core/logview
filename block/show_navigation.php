@@ -33,6 +33,7 @@ class B_logview__show_navigation extends Block
 
 	protected $inputs = array(
 		'file' => array(),			// Filename
+		'name' => null,				// Name of the log
 		'offsets' => array(),
 		'link' => array(),
 		'slot' => 'default',
@@ -52,6 +53,7 @@ class B_logview__show_navigation extends Block
 
 		$this->template_add(null, 'logview/navigation', array(
 				'file' => $this->in('file'),
+				'name' => $this->in('name'),
 				'link' => $this->in('link'),
 				'begin_offset' => $offsets['begin'],
 				'prev_offset' => $offsets['prev'],

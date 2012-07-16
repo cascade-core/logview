@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright (c) 2012, Josef Kufner  <jk@frozen-doe.net>
+ * Copyright (c) 2011, Josef Kufner  <jk@frozen-doe.net>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -28,33 +28,47 @@
  * SUCH DAMAGE.
  */
 
-class B_logview__show_log extends Block
+class B_logview__load_config extends Block
 {
-
 	protected $inputs = array(
-		'lines' => array(),
-		'name' => null,				// Name of the log
-		'line_link' => '#byte{offset}',
-		'slot' => 'default',
-		'slot_weight' => 50,
 	);
 
 	protected $outputs = array(
+		'file_map' => true,
 		'done' => true,
 	);
 
-	const force_exec = true;
+	const force_exec = false;
 
 
 	public function main()
 	{
-		$this->template_add(null, 'logview/log', array(
-				'lines' => $this->in('lines'),
-				'name' => $this->in('name'),
-				'line_link' => $this->in('line_link'),
-			));
-	}
+		$cfg = parse_ini_file('logs.ini.php', TRUE);
 
+		if ($cfg === FALSE) {
+			// FIXME: NEVER DO THIS !!!  --  It is very bad example.
+			header('Content-Type: text/plain');
+			echo "Log configuration in logs.ini.php is missing.\n\nExample:\n\n";
+			echo ";<?", "php exit(); __halt_compiler(); ?", ">\n";
+			echo ";\n";
+			echo "; Log filenames\n";
+			echo ";\n";
+			echo "\n";
+			echo "[file_map]\n";
+			echo "apache = \"/var/log/apache2/error.log\"\n";
+			echo "httpd = \"/var/log/httpd-error.log\"\n";
+			echo "lighttpd = \"/var/log/lighttpd/error.log\"\n";
+			echo "syslog = \"/var/log/syslog\"\n";
+			echo "\n";
+			echo "\n";
+			echo "; vim:filetype=dosini:\n";
+			exit();
+		}
+
+		$this->out_all($cfg);
+		$this->out('done', true);
+	}
 }
+
 
 

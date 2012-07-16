@@ -40,7 +40,7 @@ function TPL_html5__logview__log($t, $id, $d, $so)
 		'debug' => '/ Debug:/i',
 	);
 
-	foreach ($lines as $line) {
+	foreach ($lines as $offset => $line) {
 
 		$line_class = '';
 		foreach ($re_class as $class => $re) {
@@ -50,7 +50,11 @@ function TPL_html5__logview__log($t, $id, $d, $so)
 			}
 		}
 
-		echo "<div class=\"$line_class\">", str_replace("\040\040", "\040&nbsp;", htmlspecialchars($line)), "</div>\n";
+		echo "<div class=\"$line_class\">",
+			"<a name=\"byte", $offset, "\" href=\"", filename_format($line_link, array('name' => $name, 'offset' => $offset)),
+				"\" class=\"mark\" title=\"", sprintf(_('Byte %s.'), $offset), "\">#</a> ",
+			str_replace("\040\040", "\040&nbsp;", htmlspecialchars($line)),
+			"</div>\n";
 	}
 
 	echo "</tt></div>\n";

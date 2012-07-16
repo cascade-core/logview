@@ -43,12 +43,12 @@ function TPL_html5__logview__navigation($t, $id, $d, $so)
 
 	// Begin
 	if (!$at_begin) {
-		echo "\t<a href=\"", filename_format($link, array('offset' => 0)), "\">", _('Begin'), "</a>\n";
+		echo "\t<a href=\"", filename_format($link, array('name' => $name, 'offset' => 0)), "\">", _('Begin'), "</a>\n";
 	}
 
 	// Prev page
 	if ($prev_offset > 0) {
-		echo "\t<a href=\"", filename_format($link, array('offset' => $prev_offset)), "\">", _('« Previous page'), "</a>\n";
+		echo "\t<a href=\"", filename_format($link, array('name' => $name, 'offset' => $prev_offset)), "\">", _('« Previous page'), "</a>\n";
 	}
 
 	echo "</td>\n";
@@ -66,10 +66,10 @@ function TPL_html5__logview__navigation($t, $id, $d, $so)
 
 	// Next
 	if (!$at_eof) {
-		echo "\t<a href=\"", filename_format($link, array('offset' => $end_offset)), "\">", _('Next page »'), "</a>\n";
+		echo "\t<a href=\"", filename_format($link, array('name' => $name, 'offset' => $end_offset)), "\">", _('Next page »'), "</a>\n";
 	}
 
-	echo "\t<a href=\"", filename_format($link, array('offset' => 'eof')), "\">", _('Last page'), "</a>\n";
+	echo "\t<a href=\"", filename_format($link, array('name' => $name, 'offset' => 'eof')), "\">", _('Last page'), "</a>\n";
 
 	echo "</td>\n";
 
