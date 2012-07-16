@@ -31,10 +31,12 @@
 class B_logview__load_config extends Block
 {
 	protected $inputs = array(
+		'name' => false,
 	);
 
 	protected $outputs = array(
-		'file_map' => true,
+		'all' => true,
+		'selected' => true,
 		'done' => true,
 	);
 
@@ -54,18 +56,39 @@ class B_logview__load_config extends Block
 			echo "; Log filenames\n";
 			echo ";\n";
 			echo "\n";
-			echo "[file_map]\n";
-			echo "apache = \"/var/log/apache2/error.log\"\n";
-			echo "httpd = \"/var/log/httpd-error.log\"\n";
-			echo "lighttpd = \"/var/log/lighttpd/error.log\"\n";
-			echo "syslog = \"/var/log/syslog\"\n";
+			echo "[apache]\n";
+			echo "file = \"/var/log/apache2/error.log\"\n";
+			echo "description = \"Apache web server error log as found on Debian.\"\n";
+			echo "\n";
+			echo "[httpd]\n";
+			echo "file = \"/var/log/httpd-error.log\"\n";
+			echo "description = \"Apache web server error log as found on FreeBSD.\"\n";
+			echo "\n";
+			echo "[lighttpd]\n";
+			echo "file = \"/var/log/lighttpd/error.log\"\n";
+			echo "description = \"Lighttpd web server error log.\"\n";
+			echo "\n";
+			echo "[syslog]\n";
+			echo "file = \"/var/log/syslog\"\n";
+			echo "description = \"System log. You should not want to show this log here.\"\n";
 			echo "\n";
 			echo "\n";
 			echo "; vim:filetype=dosini:\n";
 			exit();
 		}
 
-		$this->out_all($cfg);
+		$name = $this->in('name');
+		if ($name !== false) {
+			if (!array_key_exists($name, $cfg)) {
+				error_msg('Requested log configuration not found: %s', $name);
+				return;
+			}
+			$selected = $cfg[$name];
+			$selected['name'] = $name;
+			$this->out('selected', $selected);
+		}
+
+		$this->out('all', $cfg);
 		$this->out('done', true);
 	}
 }

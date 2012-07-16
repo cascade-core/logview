@@ -32,8 +32,7 @@ class B_logview__show_navigation extends Block
 {
 
 	protected $inputs = array(
-		'file' => array(),			// Filename
-		'name' => null,				// Name of the log
+		'log_cfg' => array(),		// Log configuration
 		'offsets' => array(),
 		'link' => array(),
 		'slot' => 'default',
@@ -49,11 +48,12 @@ class B_logview__show_navigation extends Block
 
 	public function main()
 	{
+		$log_cfg = $this->in('log_cfg');
 		$offsets = $this->in('offsets');
 
 		$this->template_add(null, 'logview/navigation', array(
-				'file' => $this->in('file'),
-				'name' => $this->in('name'),
+				'file' => $log_cfg['file'],
+				'name' => $log_cfg['name'],
 				'link' => $this->in('link'),
 				'begin_offset' => $offsets['begin'],
 				'prev_offset' => $offsets['prev'],

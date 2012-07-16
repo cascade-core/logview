@@ -35,10 +35,14 @@ function TPL_html5__logview__menu($t, $id, $d, $so)
 
 	echo "<ul class=\"logview_menu\" id=\"", $id, "\">\n";
 
-	foreach ($file_map as $name => $file) {
+	foreach ($all_log_cfg as $name => $cfg) {
 		echo "<li>";
-		printf(_('<a href="%s">%s</a>: %s'), filename_format($link, array('name' => $name, 'offset' => 'eof')), $name, $file);
-		echo "</li>\n";
+		printf(_('<a href="%s">%s</a>: %s'),
+			filename_format($link, array('name' => $name, 'offset' => 'eof')),
+			$name, $cfg['description']);
+		echo "<br>\n\t<small>";
+		printf(_('File: <tt>%s</tt>'), $cfg['file']);
+		echo "</small></li>\n";
 	}
 
 	echo "</ul>\n";

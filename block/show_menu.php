@@ -32,7 +32,7 @@ class B_logview__show_menu extends Block
 {
 
 	protected $inputs = array(
-		'file_map' => array(),
+		'all_log_cfg' => array(),		// Full log configuration
 		'link' => array(),
 		'slot' => 'default',
 		'slot_weight' => 50,
@@ -48,7 +48,7 @@ class B_logview__show_menu extends Block
 	public function main()
 	{
 		$this->template_add(null, 'logview/menu', array(
-				'file_map' => $this->in('file_map'),
+				'all_log_cfg' => $this->in('all_log_cfg'),
 				'link' => $this->in('link'),
 			));
 

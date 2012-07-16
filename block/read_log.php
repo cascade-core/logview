@@ -32,17 +32,13 @@ class B_logview__read_log extends Block
 {
 
 	protected $inputs = array(
-		'filename' => false,		// Filename to show ('file_map' will be ignored if this is set).
-		'name' => false,		// Name of log to show (looked up from 'file_map').
-		'file_map' => false,		// Mapping log name to real filename.
+		'log_cfg' => array(),		// Log configuration
 		'offset' => 0,			// Start from byte 'offset'
 		'max_lines' => 250,		// Max. lines count
 		'snap_url' => null,		// Snap to line start -- redirect url.
 	);
 
 	protected $outputs = array(
-		'file' => true,			// Name of file
-		'name' => true,			// Name of log (before applying 'file_map')
 		'lines' => true,		// Loaded lines (in array).
 		'offsets' => true,		// Offsets: First line, line after last line, eof.
 		'count' => true,		// Count of loaded lines.
@@ -53,34 +49,18 @@ class B_logview__read_log extends Block
 
 	public function main()
 	{
-		$filename = $this->in('filename');
-		$name = $this->in('name');
-		$file_map = $this->in('file_map');
+		$log_cfg = $this->in('log_cfg');
 		$offset = $this->in('offset');
 		$max_lines = $this->in('max_lines');
 		$snap_url = $this->in('snap_url');
 
-		// Get filename
-		if ($filename !== false) {
-			// Filename specified
-			$file = $filename;
-		} else {
-			// Lookup from file_map
-			if (!array_key_exists($name, $file_map)) {
-				error_msg('Requested unknown log file: %s', $name);
-				return;
-			}
-			$file = filename_format($file_map[$name]);
-		}
-
 		// Build log title
-		$this->out('title', sprintf(_('Log %s'), basename($file)));
-		$this->out('name', $name);
+		$this->out('title', sprintf(_('Log %s'), basename($log_cfg['file'])));
 
 		// Open log
-		$f = fopen($file, 'rt');
+		$f = fopen($log_cfg['file'], 'rt');
 		if ($f === FALSE) {
-			error_msg('Failed to open log file: %s', $file);
+			error_msg('Failed to open log file: %s', $log_cfg['file']);
 			return;
 		}
 
@@ -96,7 +76,7 @@ class B_logview__read_log extends Block
 				$real_offset = ftell($f);
 				if ($real_offset != $offset) {
 					debug_msg('Snap to byte %s (requested %s).', $real_offset, $offset);
-					$url = filename_format($snap_url, array('name' => $name, 'offset' => $real_offset));
+					$url = filename_format($snap_url, array('name' => $log_cfg['name'], 'offset' => $real_offset));
 					$this->template_option_set('root', 'redirect_url', $url);
 					return;
 				}
@@ -122,7 +102,6 @@ class B_logview__read_log extends Block
 			'eof' => $stat['size'],
 		);
 
-		$this->out('file', $file);
 		$this->out('lines', $lines);
 		$this->out('offsets', $offsets);
 		$this->out('count', $i);

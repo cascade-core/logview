@@ -32,8 +32,8 @@ class B_logview__show_log extends Block
 {
 
 	protected $inputs = array(
+		'log_cfg' => array(),		// Log configuration
 		'lines' => array(),
-		'name' => null,				// Name of the log
 		'line_link' => '#byte{offset}',
 		'slot' => 'default',
 		'slot_weight' => 50,
@@ -48,9 +48,11 @@ class B_logview__show_log extends Block
 
 	public function main()
 	{
+		$log_cfg = $this->in('log_cfg');
+
 		$this->template_add(null, 'logview/log', array(
+				'name' => $log_cfg['name'],
 				'lines' => $this->in('lines'),
-				'name' => $this->in('name'),
 				'line_link' => $this->in('line_link'),
 			));
 
