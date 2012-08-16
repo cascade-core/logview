@@ -34,7 +34,6 @@ class B_logview__read_log extends Block
 	protected $inputs = array(
 		'log_cfg' => array(),		// Log configuration
 		'offset' => 0,			// Start from byte 'offset'
-		'max_lines' => 250,		// Max. lines count
 		'snap_url' => null,		// Snap to line start -- redirect url.
 	);
 
@@ -51,8 +50,12 @@ class B_logview__read_log extends Block
 	{
 		$log_cfg = $this->in('log_cfg');
 		$offset = $this->in('offset');
-		$max_lines = $this->in('max_lines');
 		$snap_url = $this->in('snap_url');
+
+		$max_lines = @ $log_cfg['max_lines'];
+		if ($max_lines == null) {
+			$max_lines = 250;
+		}
 
 		// Build log title
 		$this->out('title', sprintf(_('Log %s'), basename($log_cfg['file'])));

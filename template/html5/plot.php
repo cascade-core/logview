@@ -28,64 +28,15 @@
  * SUCH DAMAGE.
  */
 
-class B_logview__show_log extends Block
+function TPL_html5__logview__plot($t, $id, $d, $so)
 {
+	extract($d);
 
-	protected $inputs = array(
-		'log_cfg' => array(),		// Log configuration
-		'lines' => array(),
-		'line_link' => '#byte{offset}',
-		'slot' => 'default',
-		'slot_weight' => 50,
-	);
-
-	protected $outputs = array(
-		'done' => true,
-	);
-
-	const force_exec = true;
-
-
-	public function main()
-	{
-		$log_cfg = $this->in('log_cfg');
-		$lines = $this->in('lines');
-
-		switch (@$log_cfg['view']) {
-
-			case 'plot':
-				// Convert data if convertor specified (invocable object)
-				$convertor = @ $log_cfg['plot_data_convertor'];
-				if ($convertor && class_exists($convertor)) {
-					$c = new $convertor();
-					$data = $c($lines);
-				} else {
-					$data = $lines;
-				}
-				// Add plot to output (javascript will draw plot at client)
-				$this->template_add('plot', 'logview/plot', array(
-						'name' => $log_cfg['name'],
-						'plot_type' => $log_cfg['plot_type'],
-						'data' => $data,
-					));
-				break;
-
-			default:
-			case 'log':
-				// Simple log
-				$this->template_add(null, 'logview/log', array(
-						'name' => $log_cfg['name'],
-						'lines' => $lines,
-						'line_link' => $this->in('line_link'),
-					));
-				break;
-
-		}
-
-
-		$this->out('done', true);
-	}
-
+	echo "<div class=\"logview_plot\" id=\"", $id, "\" ",
+			"data-plot_type=\"", htmlspecialchars($plot_type), "\" ",
+			"data-values='", json_encode($data, JSON_HEX_APOS | JSON_HEX_AMP | JSON_NUMERIC_CHECK), "'>",
+		"</div>\n";
 }
+
 
 
