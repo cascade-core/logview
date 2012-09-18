@@ -32,7 +32,7 @@ class B_logview__show_log extends Block
 {
 
 	protected $inputs = array(
-		'log_cfg' => array(),		// Log configuration
+		'log_cfg' => false,		// Log configuration (simple text by default)
 		'lines' => array(),
 		'line_link' => '#byte{offset}',
 		'slot' => 'default',
@@ -50,6 +50,15 @@ class B_logview__show_log extends Block
 	{
 		$log_cfg = $this->in('log_cfg');
 		$lines = $this->in('lines');
+
+		if ($log_cfg === false) {
+			// Default configuration
+			$log_cfg = array(
+				'name' => null,
+				'view' => 'log',
+				'line_link' => null,
+			);
+		}
 
 		switch (@$log_cfg['view']) {
 
