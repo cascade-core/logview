@@ -50,11 +50,13 @@ function TPL_html5__logview__log($t, $id, $d, $so)
 			}
 		}
 
-		echo "<div class=\"$line_class\">",
-			"<a name=\"byte", $offset, "\" href=\"", filename_format($line_link, array('name' => $name, 'offset' => $offset)),
+		echo "<div class=\"$line_class\">";
+		if ($line != '') {
+			echo "<a name=\"byte", $offset, "\" href=\"", filename_format($line_link, array('name' => $name, 'offset' => $offset)),
 				"\" class=\"mark\" title=\"", sprintf(_('Byte %s.'), $offset), "\">#</a> ",
-			str_replace("\040\040", "\040&nbsp;", htmlspecialchars($line)),
-			"</div>\n";
+				str_replace("\040\040", "\040&nbsp;", htmlspecialchars($line));
+		}
+		echo "</div>\n";
 	}
 
 	echo "</tt></div>\n";
