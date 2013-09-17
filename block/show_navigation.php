@@ -51,7 +51,7 @@ class B_logview__show_navigation extends Block
 		$log_cfg = $this->in('log_cfg');
 		$offsets = $this->in('offsets');
 
-		$this->template_add(null, 'logview/navigation', array(
+		$this->templateAdd(null, 'logview/navigation', array(
 				'file' => $log_cfg['file'],
 				'name' => $log_cfg['name'],
 				'link' => $this->in('link'),

@@ -71,7 +71,7 @@ class B_logview__read_log extends Block
 
 		// Seek to offset
 		if ($offset == 'eof') {
-			$offset = $this->find_prev_page_offset($f, $stat['size'], $max_lines);
+			$offset = $this->findPrevPageOffset($f, $stat['size'], $max_lines);
 		} else if ($offset > 0) {
 			if ($snap_url != '') {
 				fseek($f, min($offset, $stat['size']) - 1, SEEK_SET);
@@ -80,7 +80,7 @@ class B_logview__read_log extends Block
 				if ($real_offset != $offset) {
 					debug_msg('Snap to byte %s (requested %s).', $real_offset, $offset);
 					$url = filename_format($snap_url, array('name' => $log_cfg['name'], 'offset' => $real_offset));
-					$this->template_option_set('root', 'redirect_url', $url);
+					$this->templateOptionSet('root', 'redirect_url', $url);
 					return;
 				}
 			} else {
@@ -101,7 +101,7 @@ class B_logview__read_log extends Block
 		$offsets = array(
 			'begin' => $begin_offset,
 			'end' => $end_offset,
-			'prev' => $this->find_prev_page_offset($f, $begin_offset, $max_lines),
+			'prev' => $this->findPrevPageOffset($f, $begin_offset, $max_lines),
 			'eof' => $stat['size'],
 		);
 
@@ -113,7 +113,7 @@ class B_logview__read_log extends Block
 		fclose($f);
 	}
 
-	private function find_prev_page_offset($f, $begin_offset, $max_lines, $step = 4096)
+	private function findPrevPageOffset($f, $begin_offset, $max_lines, $step = 4096)
 	{
 		$line_offsets = array();
 		$p = $begin_offset;

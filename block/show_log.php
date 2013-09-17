@@ -72,7 +72,7 @@ class B_logview__show_log extends Block
 					$data = $lines;
 				}
 				// Add plot to output (javascript will draw plot at client)
-				$this->template_add('plot', 'logview/plot', array(
+				$this->templateAdd('plot', 'logview/plot', array(
 						'name' => $log_cfg['name'],
 						'plot_type' => $log_cfg['plot_type'],
 						'data' => $data,
@@ -82,7 +82,7 @@ class B_logview__show_log extends Block
 			default:
 			case 'log':
 				// Simple log
-				$this->template_add(null, 'logview/log', array(
+				$this->templateAdd(null, 'logview/log', array(
 						'name' => $log_cfg['name'],
 						'lines' => $lines,
 						'line_link' => $this->in('line_link'),

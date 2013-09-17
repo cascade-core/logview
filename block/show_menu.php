@@ -47,7 +47,7 @@ class B_logview__show_menu extends Block
 
 	public function main()
 	{
-		$this->template_add(null, 'logview/menu', array(
+		$this->templateAdd(null, 'logview/menu', array(
 				'all_log_cfg' => $this->in('all_log_cfg'),
 				'link' => $this->in('link'),
 			));
