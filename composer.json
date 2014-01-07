@@ -1,0 +1,19 @@
+{
+	"name": "cascade/logview",
+	"type": "cascade-plugin",
+	"description": "Present logs in a nice way, including pagination, plots, and big file support.",
+	"license": "BSD-3-Clause",
+	"authors": [
+		{
+			"name": "Josef Kufner",
+			"email": "jk@frozen-doe.net"
+		}
+	],
+	"extra": {
+		"plugin": "logview"
+	},
+	"require": {
+		"cascade/composer-plugin": "dev-master"
+	}
+}
+
