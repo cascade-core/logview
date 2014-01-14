@@ -2,7 +2,7 @@
 	"name": "cascade/logview",
 	"type": "cascade-plugin",
 	"description": "Present logs in a nice way, including pagination, plots, and big file support.",
-	"license": "BSD-3-Clause",
+	"license": "Apache-2.0",
 	"authors": [
 		{
 			"name": "Josef Kufner",
