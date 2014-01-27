@@ -16,7 +16,7 @@
  *
  */
 
-class B_logview__load_config extends Block
+class B_logview__load_config extends \Cascade\Core\Block
 {
 	protected $inputs = array(
 		'name' => false,

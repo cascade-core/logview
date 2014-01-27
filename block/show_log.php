@@ -16,7 +16,7 @@
  *
  */
 
-class B_logview__show_log extends Block
+class B_logview__show_log extends \Cascade\Core\Block
 {
 
 	protected $inputs = array(

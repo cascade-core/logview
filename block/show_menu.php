@@ -16,7 +16,7 @@
  *
  */
 
-class B_logview__show_menu extends Block
+class B_logview__show_menu extends \Cascade\Core\Block
 {
 
 	protected $inputs = array(
